@@ -1,16 +1,17 @@
+/* eslint-disable linebreak-style */
 import { useEffect, useState } from 'react';
 import BlogPost from './components/BlogPost';
 import LoginForm from './components/LoginForm';
 import NotificationMessage from './components/NotificationMessage';
 import PostForm from './components/PostForm';
+import Togglable from './components/Togglable';
 import {
-	addNewPost,
+	addLike,
+	deletePost,
 	getAll,
-	getLoggedUser,
-	LogUserIn,
 	LogUserOut,
 } from './services/blogService';
-import { getStorageItem, setStorageItem } from './utils/storageHelpers';
+import { getStorageItem } from './utils/storageHelpers';
 
 function App() {
 	const [blogs, setBlogs] = useState([]);
@@ -28,7 +29,6 @@ function App() {
 		const data = getStorageItem('loggedUser');
 		setUser(data);
 	}, []);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
 		fetchData();
 	}, []);
@@ -44,39 +44,23 @@ function App() {
 			});
 		}, 5000);
 	};
-	const handleLoginSubmit = async (e) => {
-		try {
-			e.preventDefault();
-			const { userName, password } = e.target;
-			const token = await LogUserIn({
-				userName: userName.value,
-				password: password.value,
-			});
-			setStorageItem('loggedUserToken', token);
-			const data = await getLoggedUser();
-			setStorageItem('loggedUser', data);
-			setUser(data);
-		} catch (err) {
-			createMessageType(err.response.data.error,'error');
-		}
+	const handelLike = async (id, data) => {
+		const post = await addLike(id, data);
+		setBlogs((prev) => {
+			const idx = prev.findIndex((obj) => obj.id === post.id);
+			prev[idx] = post;
+			return [...prev];
+		});
 	};
-	const handleCreatePostSubmit = async (e) => {
-		try {
-			e.preventDefault();
-			const { title, author, url } = e.target;
-			const post = await addNewPost({
-				title: title.value,
-				author: author.value,
-				url: url.value,
-			});
+	const handelDelete = async (id) => {
+		if (window.confirm('Do you really want to Remove this post?')) {
+			await deletePost(id);
 			setBlogs((prev) => {
-				return [...prev, post];
+				prev = prev.filter((obj) => obj.id !== id);
+				return [...prev];
 			});
-		} catch (err) {
-			createMessageType(err.response.data.error,'error');
 		}
 	};
-
 	return (
 		<div className='App'>
 			<NotificationMessage message={message} />
@@ -91,15 +75,23 @@ function App() {
 					>
 						logout
 					</button>
-					{/* <PostForm onsubmit={()=>console.log("hello")} /> */}
-					<PostForm onsubmit={handleCreatePostSubmit} />
-					<BlogPost blogPosts={blogs} />
+					<Togglable buttonLabel='Add Post'>
+						<PostForm
+							createMessageType={createMessageType}
+							setBlogs={setBlogs}
+						/>
+					</Togglable>
+					<BlogPost
+						currentUser={user}
+						LikeHandler={handelLike}
+						deleteHandler={handelDelete}
+						blogPosts={blogs}
+					/>
 				</>
 			) : (
-				<LoginForm onsubmitHandler={handleLoginSubmit} />
+				<LoginForm createMessageType={createMessageType} setUser={setUser} />
 			)}
 		</div>
 	);
 }
-
 export default App;
