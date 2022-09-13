@@ -37,11 +37,15 @@ function BlogPostList({ post, handelLike, currentUser, handelDelete }) {
 					<p>{post.url}</p>
 					<p>
 						{post.likes}{' '}
-						<button onClick={() => handelLike(post.id, post)}>like</button>
+						<button id='like-btn' onClick={() => handelLike(post.id, post)}>
+							like
+						</button>
 					</p>
 					<p>{post.user?.name}</p>
 					{post.user?.name === currentUser.name && (
-						<button onClick={() => handelDelete(post.id)}>Delete Post</button>
+						<button id='delete-btn' onClick={() => handelDelete(post.id)}>
+							Delete Post
+						</button>
 					)}
 				</ToggleDetail>
 			</span>

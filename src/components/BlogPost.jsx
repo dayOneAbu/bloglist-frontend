@@ -2,7 +2,7 @@ import BlogPostList from './BlogPostList';
 import PropTypes from 'prop-types';
 function BlogPost({ blogPosts, LikeHandler, currentUser, deleteHandler }) {
 	return (
-		<div>
+		<div className='blog'>
 			<h2>blogs</h2>
 			{blogPosts &&
 				blogPosts

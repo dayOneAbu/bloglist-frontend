@@ -10,9 +10,11 @@ import {
 	addNewPost,
 	deletePost,
 	getAll,
+	getLoggedUser,
+	LogUserIn,
 	LogUserOut,
 } from './services/blogService';
-import { getStorageItem } from './utils/storageHelpers';
+import { getStorageItem, setStorageItem } from './utils/storageHelpers';
 
 function App() {
 	const [blogs, setBlogs] = useState([]);
@@ -78,6 +80,22 @@ function App() {
 			});
 		}
 	};
+	const handleLoginSubmit = async (e) => {
+		try {
+			e.preventDefault();
+			const { userName, password } = e.target;
+			const token = await LogUserIn({
+				userName: userName.value,
+				password: password.value,
+			});
+			setStorageItem('loggedUserToken', token);
+			const data = await getLoggedUser();
+			setStorageItem('loggedUser', data);
+			setUser(data);
+		} catch (err) {
+			createMessageType(err.response.data.error, 'error');
+		}
+	};
 	return (
 		<div className='App'>
 			<NotificationMessage message={message} />
@@ -93,10 +111,7 @@ function App() {
 						logout
 					</button>
 					<Togglable buttonLabel='Add Post'>
-						<PostForm
-							createMessageType={createMessageType}
-							setBlogs={setBlogs}
-						/>
+						<PostForm handleCreatePostSubmit={handleCreatePostSubmit} />
 					</Togglable>
 					<BlogPost
 						currentUser={user}
@@ -106,7 +121,7 @@ function App() {
 					/>
 				</>
 			) : (
-				<LoginForm handleCreatePostSubmit={handleCreatePostSubmit} />
+				<LoginForm handleLoginSubmit={handleLoginSubmit} />
 			)}
 		</div>
 	);

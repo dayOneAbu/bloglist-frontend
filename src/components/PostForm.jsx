@@ -15,6 +15,7 @@ function PostForm({ handleCreatePostSubmit }) {
 					<label htmlFor='title'>
 						title {''}{' '}
 						<input
+							id='title'
 							name='title'
 							value={post.title}
 							placeholder='write here post title'
@@ -33,6 +34,7 @@ function PostForm({ handleCreatePostSubmit }) {
 					<label htmlFor='author'>
 						author {''}
 						<input
+							id='author'
 							name='author'
 							value={post.author}
 							onChange={(e) =>
@@ -49,6 +51,7 @@ function PostForm({ handleCreatePostSubmit }) {
 				<div>
 					<label htmlFor='url'>url</label>
 					<input
+						id='url'
 						name='url'
 						value={post.url}
 						onChange={(e) =>
@@ -61,7 +64,9 @@ function PostForm({ handleCreatePostSubmit }) {
 						}
 					/>
 				</div>
-				<button type='submit'>Create Post</button>
+				<button id='submit-btn' type='submit'>
+					Create Post
+				</button>
 			</form>
 		</div>
 	);
