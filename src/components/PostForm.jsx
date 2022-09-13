@@ -1,28 +1,12 @@
 import { useState } from 'react';
-import { addNewPost } from '../services/blogService';
 import PropTypes from 'prop-types';
-function PostForm({ createMessageType, setBlogs }) {
+function PostForm({ handleCreatePostSubmit }) {
 	const [post, setPost] = useState({
 		title: '',
 		author: '',
 		url: '',
 	});
-	const handleCreatePostSubmit = async (e) => {
-		try {
-			e.preventDefault();
-			const { title, author, url } = e.target;
-			const post = await addNewPost({
-				title: title.value,
-				author: author.value,
-				url: url.value,
-			});
-			setBlogs((prev) => {
-				return [...prev, post];
-			});
-		} catch (err) {
-			createMessageType(err.response.data.error, 'error');
-		}
-	};
+
 	return (
 		<div>
 			<h2>Create New Post</h2>
@@ -33,6 +17,7 @@ function PostForm({ createMessageType, setBlogs }) {
 						<input
 							name='title'
 							value={post.title}
+							placeholder='write here post title'
 							onChange={(e) =>
 								setPost((prev) => {
 									return {
@@ -82,7 +67,6 @@ function PostForm({ createMessageType, setBlogs }) {
 	);
 }
 PostForm.propTypes = {
-	setBlogs: PropTypes.func.isRequired,
-	createMessageType: PropTypes.func.isRequired,
+	handleCreatePostSubmit: PropTypes.func.isRequired,
 };
 export default PostForm;

@@ -1,10 +1,15 @@
 import { useState } from 'react';
-function ToggleDetail({ visible, children, onClick, label }) {
+export function ToggleDetail({ visible, children, onClick, label }) {
 	return (
-		<>
+		<span>
 			<button onClick={onClick}>{label}</button>
-			<div style={{ display: visible ? '' : 'none' }}>{children}</div>
-		</>
+			<div
+				className='togglableContent'
+				style={{ display: visible ? '' : 'none' }}
+			>
+				{children}
+			</div>
+		</span>
 	);
 }
 function BlogPostList({ post, handelLike, currentUser, handelDelete }) {
@@ -21,7 +26,7 @@ function BlogPostList({ post, handelLike, currentUser, handelDelete }) {
 		marginBottom: 5,
 	};
 	return (
-		<div style={blogStyle}>
+		<div className='blogPost' style={blogStyle}>
 			{post.title}, by {post.author}{' '}
 			<span>
 				<ToggleDetail

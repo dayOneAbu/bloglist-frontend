@@ -7,6 +7,7 @@ import PostForm from './components/PostForm';
 import Togglable from './components/Togglable';
 import {
 	addLike,
+	addNewPost,
 	deletePost,
 	getAll,
 	LogUserOut,
@@ -52,6 +53,22 @@ function App() {
 			return [...prev];
 		});
 	};
+	const handleCreatePostSubmit = async (e) => {
+		try {
+			e.preventDefault();
+			const { title, author, url } = e.target;
+			const post = await addNewPost({
+				title: title.value,
+				author: author.value,
+				url: url.value,
+			});
+			setBlogs((prev) => {
+				return [...prev, post];
+			});
+		} catch (err) {
+			createMessageType(err.response.data.error, 'error');
+		}
+	};
 	const handelDelete = async (id) => {
 		if (window.confirm('Do you really want to Remove this post?')) {
 			await deletePost(id);
@@ -89,7 +106,7 @@ function App() {
 					/>
 				</>
 			) : (
-				<LoginForm createMessageType={createMessageType} setUser={setUser} />
+				<LoginForm handleCreatePostSubmit={handleCreatePostSubmit} />
 			)}
 		</div>
 	);
